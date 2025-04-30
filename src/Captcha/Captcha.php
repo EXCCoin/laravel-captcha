@@ -105,9 +105,14 @@ class Captcha
     public function getView()
     {
         $route = route('bone.captcha.image', [], false);
-        if (mb_strpos(config('app.url'), 'https://') !== false) {
-            $route = secure_url($route);
+        
+        // Use helper from bootstrap/helpers.php to check if accessed via onion
+        if (!function_exists('via_onion') || !via_onion()) {
+            if (mb_strpos(config('app.url'), 'https://') !== false) {
+                $route = secure_url($route);
+            }
         }
+        
         $route .= '?_=' . mt_rand();
 
         return view('bone::captcha.image', [
